@@ -1,0 +1,6 @@
+pyyaml
+paramiko
+setuptools
+jinja2
+typeguard
+pandas

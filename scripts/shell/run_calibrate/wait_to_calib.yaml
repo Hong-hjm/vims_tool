@@ -1,0 +1,5 @@
+RDK:
+  paths:
+    rosbag_dir:
+      - /root/calibration/0.0.2/pingshi_2/
+      - /root/calibration/0.0.2/pingshi_3/

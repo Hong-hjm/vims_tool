@@ -1,0 +1,6 @@
+device:
+  platform: x5
+  ros_distro: humble
+  host: 192.168.66.149
+  user: root
+  password: root
