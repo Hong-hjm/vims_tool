@@ -1,0 +1,13 @@
+.venv/
+calib_data/
+calib_data_json/
+log/
+calib_params.csv
+calculate_calib_params.csv
+
+__pycache__/
+
+
+/home/hu/RDK/calib_tool/scripts/shell/cp_to_win.sh
+/home/hu/RDK/calib_tool/scripts/shell/remove.sh
+/home/hu/RDK/calib_tool/scripts/shell/rename_calib.sh

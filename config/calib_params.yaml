@@ -3,3 +3,6 @@ calibration:
   frontal_view: [0.0, 0.0, 0.0, 0.135, 0.04, 0.152]
   overhead_view: [0.0, 5.94, 0.0, 0.139, 0.04, 0.149]
   upward_view: [0.0, -5.94, 0.0, 0.13, 0.04, 0.164]
+
+# 标定次数，与 calib.sh 中的 CALIB_NUM 同步
+calib_num: 1

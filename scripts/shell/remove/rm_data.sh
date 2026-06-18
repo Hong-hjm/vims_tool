@@ -1,5 +1,5 @@
 #!/bin/bash
-# 删除 RDK 上生成的标定数据
+# 删除 RDK 上的标定数据
 
 PROJECT_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
 
@@ -10,11 +10,6 @@ CALIB_DATA_DIR="$(yq '.RDK.paths.calib_data_dir' "$PROJECT_DIR/config/paths.yaml
 RDK_HOST="$(yq '.device.host' "$PROJECT_DIR/config/device.yaml")"
 RDK_USER="$(yq '.device.user' "$PROJECT_DIR/config/device.yaml")"
 RDK_PASS="$(yq '.device.password' "$PROJECT_DIR/config/device.yaml")"
-
-echo "========================================"
-echo "  Delete calibration data on RDK ($RDK_HOST)"
-echo "  remove ${CALIB_DATA_DIR}"
-echo "========================================"
 
 # 通过 SSH 远程执行删除
 sshpass -p "$RDK_PASS" ssh -o StrictHostKeyChecking=no "${RDK_USER}@${RDK_HOST}" \

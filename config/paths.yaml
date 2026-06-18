@@ -7,8 +7,8 @@ RDK:
       # RDK采集数据包存放路径
       rosbag_dir: 
         - "/root/calibration/0.0.2/pingshi_1/"
-        - "/root/calibration/0.0.2/pingshi_2/"
-        - "/root/calibration/0.0.2/pingshi_3/"
+        - "/root/calibration/0.0.2/fushi_1/"
+        - "/root/calibration/0.0.2/yangshi_1/"
         # - "/root/calibration/0.0.2/fushi"
 
 x86:
@@ -25,20 +25,14 @@ x86:
       # 标定参数文件名
       calib_params_file: "calibration_result.json"
 
+evo:
+    # 轨迹文件路径 (TUM 格式)
+    vio_results: 
+      - "/mnt/c/Users/jianming.hu/Downloads/vio_package_1/v1/"
+      - "/mnt/c/Users/jianming.hu/Downloads/vio_package_1/v2/"
+      - "/mnt/c/Users/jianming.hu/Downloads/vio_package_1/v3/"
+    tum_file: "trajectory/ov_est.tum"
 
-# 功能测试使用配置
-RDK_test:
-    paths:
-      calib_data_dir: "/root/t/"
-      log_dir: "/root/t/c/"
-      rosbag_dir: 
-        - "/root/t/b/"
-        - "/root/t/a/"
-x86_test:
-    paths:
-      calib_data_dir: "/home/hu/RDK/calib_tool/test_dir/A/"
-      calib_data_json_dir: "/home/hu/RDK/calib_tool/test_dir/B/"
-      log_dir: "/home/hu/RDK/calib_tool/test_dir/C/"
-      rosbag_dir: "/home/hu/RDK/calib_tool/test_dir/D/"
-    files:
-      calib_params_file: "1.txt"
+    # 输出截图路径
+    output_image: "vio_output_img/"
+

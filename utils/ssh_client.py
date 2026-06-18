@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SSH 连接 RDK 设备，参数从 device.yaml 读取
+# 连接 RDK 设备，提供远程设备文件操作方法，参数从 device.yaml 读取
 import os
 import sys
 import select
@@ -7,12 +7,12 @@ import yaml
 import paramiko
 import subprocess
 import logging
-import file_utils, paths
+from utils import file_utils, paths
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
 logger = logging.getLogger(__name__)
 
-def _confirm_with_timeout(prompt, timeout=5):
+def _confirm_with_timeout(prompt, timeout=1):
     # 带超时的确认，timeout 秒无输入自动继续
     logger.info(f"{prompt} (y/n, {timeout}s timeout, auto-transfer and overwrite file)")
     if sys.stdin in select.select([sys.stdin], [], [], timeout)[0]:
@@ -26,6 +26,7 @@ def _confirm_with_timeout(prompt, timeout=5):
     return False
 
 config_device = paths.calib_tool / "config" / "device.yaml"
+
 # SSH连接
 class SSHClient:
     def __init__(self):
@@ -37,9 +38,11 @@ class SSHClient:
         user = self.device.get("user")
         password = self.device.get("password")
         port = self.device.get("port")
+        self.client = None
 
         if not host or not user or not password or not port:
             logger.error("do not have data configured in device.yaml")
+            self.client = None
             return
 
         self.client = paramiko.SSHClient()

@@ -1,8 +1,8 @@
-# 上下文管理器
+# 上下文管理器，日志获取
 import sys
 import logging
 import contextlib
-import file_utils, paths
+from utils import file_utils, paths
 import datetime
 from pathlib import Path
 import re
@@ -24,16 +24,16 @@ def generate_log_path():
 
 @contextlib.contextmanager
 def capture_all_output(log_dir, log_mask: Literal["calib", "process"]):
-    calib_num = 1
+    calib_num = 0
     files = list(Path(log_dir).glob(f"{log_mask}_*.log"))
-    if files:  
-        for f in files:
-            match = re.search(rf'{log_mask}_(\d+)\.log$', f.name)
-            if match:
-                n = int(match.group(1))
-                if n > calib_num:
-                    calib_num = n
-    log_file = log_dir / f"{log_mask}_{calib_num}.log"
+    for f in files:
+        match = re.search(rf'{log_mask}_(\d+)\.log$', f.name)
+        if match:
+            n = int(match.group(1))
+            if n > calib_num:
+                calib_num = n
+    calib_num += 1
+    log_file = Path(log_dir) / f"{log_mask}_{calib_num}.log"
 
     # 给 root logger 添加文件 handler，捕获 logging 输出
     file_handler = logging.FileHandler(log_file, encoding="utf-8")

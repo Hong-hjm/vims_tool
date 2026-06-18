@@ -1,5 +1,8 @@
+# 传输文件
+
 import logging
-# sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import subprocess
+from pathlib import Path
 from utils import paths, file_utils, ssh_client, log_utils
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
@@ -17,11 +20,13 @@ class ScpTransfer:
 
     def ssh_close(self):
         if self.action:
-            logger.info("disconnected")
+            logger.info("connection closed")
             self.action.close()
 
-    # 只传输标定文件
-    def transfer_calib_json(self):
+    # 只传输标定文件,返回RDK文件路径列表
+    def transfer_calib_json(self) -> list:
+        logger.info("="*30)
+        logger.info("start to transfer calibrate_result.json")
         if not self.action:
             logger.error("connection lost")
             return
@@ -31,35 +36,41 @@ class ScpTransfer:
 
         def _scan_rdk_dirs(remote_dir):
             # 扫描 RDK 目录，按目录层级构建嵌套列表，直到目录下存在目标 json 文件才返回路径
-            self.calib_result = []
+            result = []
 
-            # 检查当前目录是否包含目标 json 文件
+            # 检查RDK当前目录是否包含目标 json 文件
             dir_list = self.action.list_dir(remote_dir)
             for item in dir_list:
-                sub_dir = remote_dir / item[1]
+                sub_dir = Path(remote_dir) / item[1]
                 if item[0] == 'file' and item[1] == paths.calib_params_file:
-                    self.calib_result.append(sub_dir)
+                    # print(sub_dir)
+                    result.append(str(sub_dir))
 
                 if item[0] == 'dir':
-                    self.calib_result.extend(_scan_rdk_dirs(sub_dir))
+                    result.extend(_scan_rdk_dirs(sub_dir))
 
-            return self.calib_result
+            return result
 
         logger.info(f"Scanning RDK directory finished")
-        dir_tree = _scan_rdk_dirs(paths.RDK_calib_data_dir)
+        self.calib_result = _scan_rdk_dirs(paths.RDK_calib_data_dir)
 
-        if not dir_tree:
+        if not self.calib_result:
             logger.error(f"No calib json file found in {paths.RDK_calib_data_dir}")
             return
-        for remote_dir in dir_tree:
+        for remote_dir in self.calib_result:
             remote_dir: str
             cut_dir = remote_dir.replace(paths.RDK_calib_data_dir, "").replace(paths.calib_params_file, "")
             local_dir = paths.calib_data_json_dir / cut_dir
             file_utils.check_path(local_dir)
             self.action.rsync_from_rdk(remote_dir, local_dir)
+        logger.info("transfer finished")
+
+        return self.calib_result
 
     #传输整个 calib 目录
     def transfer_calib(self):
+        logger.info("="*30)
+        logger.info("start to transfer calib_data dir")
         if not self.action:
             logger.error("connection lost")
             return
@@ -68,8 +79,14 @@ class ScpTransfer:
             return
 
         logger.info(f"Directory exists on RDK device: {paths.RDK_calib_data_dir}")
-        p = paths.RDK_calib_data_dir / "*"
+        p = Path(paths.RDK_calib_data_dir) / "*"
         self.action.rsync_from_rdk(p, paths.calib_data_dir)
+        logger.info("transfer finished")
+
+    # 删除RDK的calib目录
+    def remove_dir(self):
+        subprocess.run(["bash", paths.rm_data_sh])
+        logger.info("calib_data was removed")
 
     # 传输 log
     # def transfer_log(self):
@@ -85,6 +102,8 @@ class ScpTransfer:
 
     # 传输 rosbag，可指定rosbag
     def transfer_rosbag(self, rosbag=None):
+        logger.info("="*30)
+        logger.info("start to transfer rosbag")
         if not self.action:
             logger.error("connection lost")
             return
@@ -100,6 +119,7 @@ class ScpTransfer:
                     self.action.rsync_from_rdk(p, paths.rosbag_dir)
                 else:
                     logger.error(f"path {p} rosbag does not exist")
+        logger.info("transfer finished")
 
 
 if __name__ == "__main__":

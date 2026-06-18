@@ -1,7 +1,7 @@
 #!/bin/bash
 # 获取rosbag
 
-# 检查 yq
+# 检查 yq，无则自动安装
 if ! command -v yq &> /dev/null; then
     echo "error: yq is not installed, please install yq first."
     echo "install automatically"
