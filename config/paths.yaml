@@ -28,7 +28,7 @@ x86:
       calib_params_file: "calibration_result.json"
 
 evo:
-    # 轨迹文件路径 (TUM 格式)
+    # 轨迹文件路径 (TUM格式)
     vio_results: 
       - "/mnt/c/Users/jianming.hu/Downloads/vio_package_1/v1/"
       - "/mnt/c/Users/jianming.hu/Downloads/vio_package_1/v2/"

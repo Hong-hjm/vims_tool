@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefm
 logger = logging.getLogger("CALIBRATE")
 
 def calib():
-    """执行标定脚本，并返回标定日志路径"""
+    """执行标定脚本，返回标定日志路径"""
     calib_log_dir = log_utils.generate_log_path()
     try:
         with log_utils.capture_all_output(calib_log_dir, "calib"):

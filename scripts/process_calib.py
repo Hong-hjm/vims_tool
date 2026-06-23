@@ -17,7 +17,7 @@ logger = logging.getLogger("PROCESS_CALIB")
 
 
 class CalibProcessor:
-    """处理本地标定数据，生成 CSV 结果"""
+    """处理标定数据，生成 CSV 结果"""
     def __init__(self):
         self.table = table_utils.Table()
         self.calib_time_map: Dict[str, dict] = {}  # {rosbag_name: {calib_name: diff_seconds}}
