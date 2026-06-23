@@ -18,7 +18,7 @@ PROJECT_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
 # 修正：使用 mapfile 读成数组
 mapfile -t BAGS < <(yq -r '.RDK.paths.rosbag_dir[]' "$PROJECT_DIR/config/paths.yaml")
 
-WAIT_CALIB_YAML="$PROJECT_DIR/scripts/shell/run_calibrate/wait_to_calib.yaml"
+WAIT_CALIB_YAML="$PROJECT_DIR/config/wait_to_calib.yaml"
 
 if [ ! -f "$WAIT_CALIB_YAML" ]; then
     mkdir -p "$(dirname "$WAIT_CALIB_YAML")"

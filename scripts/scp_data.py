@@ -1,5 +1,4 @@
 # 传输文件
-
 import logging
 import subprocess
 from pathlib import Path
@@ -8,8 +7,9 @@ from utils import paths, file_utils, ssh_client, log_utils
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
 logger = logging.getLogger("SCP_DATA")
 
-# 从 RDK 设备传输标定数据和日志到本地
+
 class ScpTransfer:
+    """从 RDK 设备传输标定数据和日志到本地"""
     def __init__(self):
         self.action = ssh_client.SSHAction()
         if not self.action.ssh.client:
@@ -23,8 +23,8 @@ class ScpTransfer:
             logger.info("connection closed")
             self.action.close()
 
-    # 只传输标定文件,返回RDK文件路径列表
-    def transfer_calib_json(self) -> list:
+    def transfer_calib_json(self):
+        """只传输标定文件,返回RDK文件路径列表"""
         logger.info("="*30)
         logger.info("start to transfer calibrate_result.json")
         if not self.action:
@@ -35,7 +35,11 @@ class ScpTransfer:
             return
 
         def _scan_rdk_dirs(remote_dir):
-            # 扫描 RDK 目录，按目录层级构建嵌套列表，直到目录下存在目标 json 文件才返回路径
+            """
+            扫描 RDK 目录，按目录层级构建嵌套列表，返回所有存在json文件的路径
+            
+            :param remote_dir: json文件的路径列表
+            """
             result = []
 
             # 检查RDK当前目录是否包含目标 json 文件
@@ -67,8 +71,8 @@ class ScpTransfer:
 
         return self.calib_result
 
-    #传输整个 calib 目录
     def transfer_calib(self):
+        """传输整个 calib 目录"""
         logger.info("="*30)
         logger.info("start to transfer calib_data dir")
         if not self.action:
@@ -83,8 +87,8 @@ class ScpTransfer:
         self.action.rsync_from_rdk(p, paths.calib_data_dir)
         logger.info("transfer finished")
 
-    # 删除RDK的calib目录
     def remove_dir(self):
+        """删除RDK的calib目录"""
         subprocess.run(["bash", paths.rm_data_sh])
         logger.info("calib_data was removed")
 
@@ -100,8 +104,14 @@ class ScpTransfer:
     #     else:
     #         logger.error(f"path {paths.RDK_log_dir} does not exist")
 
-    # 传输 rosbag，可指定rosbag
+
     def transfer_rosbag(self, rosbag=None):
+        """
+        传输 rosbag，可指定rosbag
+        
+        :param self: ScpTransfer 对象
+        :param rosbag: rosbag路径
+        """
         logger.info("="*30)
         logger.info("start to transfer rosbag")
         if not self.action:
@@ -124,7 +134,7 @@ class ScpTransfer:
 
 if __name__ == "__main__":
     log_dir = log_utils.generate_log_path()
-    with log_utils.capture_all_output(log_dir):
+    with log_utils.capture_all_output(log_dir, "process"):
         transfer = ScpTransfer()
         transfer.transfer_calib_json()
         transfer.transfer_calib()

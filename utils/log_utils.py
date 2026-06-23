@@ -15,8 +15,8 @@ class _Tee:
     def flush(self):
         for x in self.s: x.flush()
 
-# 生成标定日志文件目录
 def generate_log_path():
+    """生成标定日志文件目录"""
     file_utils.check_path(paths.log_dir)
     log_dir = paths.log_dir / f"{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
     file_utils.check_path(log_dir)
@@ -24,6 +24,12 @@ def generate_log_path():
 
 @contextlib.contextmanager
 def capture_all_output(log_dir, log_mask: Literal["calib", "process"]):
+    """
+        获取输出保存至日志
+        params: 
+            log_dir: 日志保存路径
+            log_mask： 日志类型（"calib"，"process"）     
+    """
     calib_num = 0
     files = list(Path(log_dir).glob(f"{log_mask}_*.log"))
     for f in files:
@@ -54,5 +60,6 @@ def capture_all_output(log_dir, log_mask: Literal["calib", "process"]):
     # 退出时移除文件 handler，避免重复
     logging.getLogger().removeHandler(file_handler)
     file_handler.close()
+
 if __name__ == "__main__":
     print(generate_log_path())

@@ -1,46 +1,38 @@
 # 标定结果处理
-
 import os
 import re
 import sys
 import json
 import yaml
 import logging
-import pandas
 from datetime import datetime
 from typing import Dict, List
 from pathlib import Path
 
-# 将项目根目录加入 sys.path，确保直接运行时能导入 utils 模块
-# _project_root = Path(__file__).resolve().parent.parent
-# if str(_project_root) not in sys.path:
-#     sys.path.insert(0, str(_project_root))
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import paths, file_utils, table_utils
-
-
-
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
 logger = logging.getLogger("PROCESS_CALIB")
 
-# 处理本地标定数据，生成 CSV 结果
+
 class CalibProcessor:
+    """处理本地标定数据，生成 CSV 结果"""
     def __init__(self):
         self.table = table_utils.Table()
         self.calib_time_map: Dict[str, dict] = {}  # {rosbag_name: {calib_name: diff_seconds}}
-        self.log_dir = None
-        # 标定次数，与 calib.sh 中的 CALIB_NUM 保持一致，由 main.py 统一管理
+        self.log_dir = None     # 日志保存路径
         try:
             with open(paths.calib_tool / "config" / "calib_params.yaml", "r") as f:
                 config: dict = yaml.safe_load(f)
-                self.expected_calib_count = int(config.get("calib_num"))
+                self.expected_calib_count = int(config.get("calib_num"))    # 标定次数
         except Exception:
+            logging.warning("did not set calib_num")
             self.expected_calib_count = 1
         logger.info(f"Expected calib count: {self.expected_calib_count}")
 
     def process_log(self):
-        """处理 self.log_dir 目录下的 calib_*log 文件，解析日志提取标定时间信息"""
+        """处理 log_dir 目录下的 calib_*log 文件，解析日志提取标定时间信息"""
         logger.info("="*30)
         logger.info("start to process the log file")
 
@@ -125,6 +117,13 @@ class CalibProcessor:
         logger.info("log file process finished")
 
     def write_csv(self, json_paths: List[str] = None):
+        """
+        数据写入csv表格
+
+        :param self: CalibProcessor 对象
+        :param json_paths: 传入json文件路径列表
+        :type json_paths: List[str]
+        """
         logger.info("="*30)
         logger.info("start to write data to csv")
 
@@ -170,10 +169,8 @@ class CalibProcessor:
 
         self.table.save_csv(view_dict)
         logger.info("csv writting finished")
+        # 计算标定结果均值与方差
 
-    
-    # 计算标定结果均值与方差
-    def calculate_stats(self):
         logger.info("="*30)
         logger.info("start to calculate stats")
 
@@ -183,8 +180,6 @@ class CalibProcessor:
 
 
 if __name__ == "__main__":
-
     processor = CalibProcessor()
     processor.write_csv()
-    # processor.calculate_stats()
 

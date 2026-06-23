@@ -6,12 +6,11 @@ from utils import paths, log_utils
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
 logger = logging.getLogger("CALIBRATE")
 
-# 返回本次执行标定
 def calib():
-    # 在本地执行 shell 脚本，实时输出日志
-    calib_dir = log_utils.generate_log_path()
+    """执行标定脚本，并返回标定日志路径"""
+    calib_log_dir = log_utils.generate_log_path()
     try:
-        with log_utils.capture_all_output(calib_dir, "calib"):
+        with log_utils.capture_all_output(calib_log_dir, "calib"):
             scripts = [paths.get_rosbag_sh, paths.calib_sh]
             for script in scripts:
                 while True:
@@ -32,7 +31,7 @@ def calib():
                     if ret == 0:
                         break
         logger.info("calibrate finished")
-        return calib_dir
+        return calib_log_dir
     except:
         logger.error("calibrate fialed")
     

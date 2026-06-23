@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefm
 logger = logging.getLogger(__name__)
 
 def _confirm_with_timeout(prompt, timeout=1):
-    # 带超时的确认，timeout 秒无输入自动继续
+    """带超时的确认，timeout 秒无输入自动继续"""
     logger.info(f"{prompt} (y/n, {timeout}s timeout, auto-transfer and overwrite file)")
     if sys.stdin in select.select([sys.stdin], [], [], timeout)[0]:
         choice = sys.stdin.readline().strip().lower()
@@ -27,8 +27,8 @@ def _confirm_with_timeout(prompt, timeout=1):
 
 config_device = paths.calib_tool / "config" / "device.yaml"
 
-# SSH连接
 class SSHClient:
+    """SSH连接"""
     def __init__(self):
         with open(config_device, "r") as f:
             config: dict = yaml.safe_load(f)
@@ -55,14 +55,15 @@ class SSHClient:
 
 
 class SSHAction:
+    """RDK 操作"""
     def __init__(self):
         self.ssh = SSHClient()
 
     def close(self):
         self.ssh.close()
 
-    # 是否存在该目录
-    def exists(self, path) -> bool:
+    def exists(self, path):
+        """RDK 是否存在该目录"""
         if not self.ssh.client:
             logger.error("not connected")
             return False
@@ -72,8 +73,8 @@ class SSHAction:
         output = stdout.read().decode().strip()
         
         return bool(output)  # 非空返回 True
-    # 删除
-    def remove(self, path) -> bool:
+    def remove(self, path):
+        """RDK 删除对应目录或文件"""
         if not self.ssh.client:
             logger.error("not connected")
             return False
@@ -88,8 +89,9 @@ class SSHAction:
             logger.error(f"failed to remove {path} on RDK device, {error}")
             return False
     
-    # 获取目录下的文件列表，区分目录和文件
-    def list_dir(self, path) -> list:
+
+    def list_dir(self, path):
+        """获取目录下的文件列表，区分目录和文件"""
         if not self.ssh.client:
             logger.error("not connected")
             return []
@@ -111,8 +113,14 @@ class SSHAction:
             logger.error(f"failed to list directory: {path}")
             return []
 
-    # 传输
     def rsync_from_rdk(self, remote_path, local_path):
+        """
+        传输文件RDK -> 本机
+        
+        :param self: SSHAction 对象
+        :param remote_path: RDK 路径
+        :param local_path: 本地路径
+        """
         # 是否保存原有文件
         save_flag = False
         if file_utils.check_path(local_path) and not file_utils.is_dir_empty(local_path):

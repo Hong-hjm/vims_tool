@@ -1,3 +1,5 @@
+# 设备参数
+
 device:
   platform: x5
   ros_distro: humble

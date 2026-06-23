@@ -1,3 +1,4 @@
+# 标定main.py
 import sys
 import yaml
 from pathlib import Path
@@ -20,24 +21,20 @@ for arg in sys.argv:
             print(f"Failed to set calib_num: {e}")
         break
 
-# calib_dir = calibrate.calib()    
-# with log_utils.capture_all_output(calib_dir, "process"):
-with log_utils.capture_all_output("/home/hu/program/RDK/calib_tool/log/20260608_173436", "process"):
+calib_dir = calibrate.calib()
+with log_utils.capture_all_output(calib_dir, "process"):
 
-    # transfer = scp_data.ScpTransfer()
-    # rdk_json_paths = transfer.transfer_calib_json()
-    # transfer.transfer_calib()
-    # transfer.remove_dir()
+    transfer = scp_data.ScpTransfer()
+    rdk_json_paths = transfer.transfer_calib_json()
+    transfer.transfer_calib()
+    transfer.remove_dir()
 
     # 2. 处理数据，计算标定结果
     processor = process_calib.CalibProcessor()
-    processor.log_dir="/home/hu/program/RDK/calib_tool/log/20260608_173436"
+    processor.log_dir=calib_dir
     processor.process_log()
     processor.write_csv()
-    processor.calculate_stats()
 
 
-    # # transfer.transfer_rosbag()
-    # transfer.ssh_close()
-
-print("结束")
+    transfer.transfer_rosbag()
+    transfer.ssh_close()

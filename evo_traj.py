@@ -1,9 +1,4 @@
-#!/usr/bin/env python3
-"""
-运行 evo_traj 命令，可视化 TUM 格式的轨迹文件，并保存截图。
-从 config/path.yaml 读取路径配置，自动扫描 vio_results 目录下的所有 rosbag 子目录。
-"""
-
+# 运行 evo_traj 命令，可视化 TUM 格式的轨迹文件，并保存截图和终点坐标
 import subprocess
 import sys
 import json
@@ -97,6 +92,7 @@ def process_vio_results(vio_results, tum_file_rel, output_base_path, txt_name):
     return success, fail
 
 def set_evo():
+    """关闭evo可视化"""
     settings_file = Path.home() / ".evo" / "settings.json"
 
     if settings_file.exists():
@@ -107,6 +103,7 @@ def set_evo():
     subprocess.run(["bash", paths.set_evo_Agg_sh], check=True) 
 
 def get_traj():
+    """运行 evo_traj 命令，可视化 TUM 格式的轨迹文件，并保存截图和终点坐标"""
     set_evo()
 
     parser = argparse.ArgumentParser(description="运行 evo_traj 可视化 TUM 轨迹并保存截图")

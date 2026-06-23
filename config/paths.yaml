@@ -1,3 +1,5 @@
+# 文件路径
+
 RDK:
     paths:
       # RDK标定数据存放路径
@@ -22,7 +24,7 @@ x86:
       # x86采集数据包存放路径
       rosbag_dir: "rosbag"
     files:
-      # 标定参数文件名
+      # 需处理的标定参数文件名
       calib_params_file: "calibration_result.json"
 
 evo:

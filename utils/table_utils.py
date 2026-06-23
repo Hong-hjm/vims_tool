@@ -1,7 +1,8 @@
+# 表格工具
 import yaml
 import logging
 import pandas
-from typing import Dict, List
+from typing import Dict
 from utils import paths
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,7 @@ _TRANSLATION_IDX = [3, 4, 5]  # params 中 X, Y, Z Translation 的索引
 _ROTATION_IDX = [0, 1, 2]     # params 中 roll, pitch, yaw 的索引
 
 class Table:
+    """表格工具"""
     def __init__(self):
         self.headers = [
             "rosbag",
@@ -39,6 +41,7 @@ class Table:
         self.csv_df = pandas.DataFrame(columns=self.headers)
 
     def view_classfy(self, view):
+        """视角分类"""
         if "pingshi" in view:
             ref_key = "frontal_view"
             label = "Frontal View"
@@ -53,7 +56,14 @@ class Table:
             label = None
         return ref_key, label
 
-    def add_ref_row(self, ref_key, label) -> list:
+    def add_ref_row(self, ref_key, label):
+        """
+        添加参考数据
+        
+        :param self: Table 对象
+        :param ref_key: 参考名
+        :param label: 视角标签
+        """
         if label:
             params = _calib_params.get(ref_key)
             # 从 params 中提取 translation 和 rotation
@@ -95,6 +105,7 @@ class Table:
         self.csv_df.to_csv(paths.calib_params_path, index=False, encoding='utf-8')
 
     def calculate(self):
+        """计算每个包，每个视角的平均值和标准差"""
         self.csv_df = pandas.DataFrame(columns=self.headers)
 
         calculate_cols = ['X Translation(m)', 'Y Translation(m)', 'Z Translation(m)', 'roll(deg)', 'pitch(deg)', 'yaw(deg)']

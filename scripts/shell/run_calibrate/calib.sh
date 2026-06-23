@@ -2,6 +2,17 @@
 # 标定脚本
 
 # 检查 sshpass，无则自动安装
+if ! command -v yq &> /dev/null; then
+    echo "error: yq is not installed, please install yq first."
+    echo "install automatically"
+    sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+    sudo chmod +x /usr/bin/yq
+    if ! command -v yq &> /dev/null; then
+        echo "error: failed to install yq, please check the installation."
+        exit 1
+    fi
+fi
+
 if ! command -v sshpass &> /dev/null; then
     echo "error: sshpass is not installed, please install sshpass first."
     echo "install automatically"
@@ -13,7 +24,7 @@ if ! command -v sshpass &> /dev/null; then
 fi
 
 PROJECT_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
-WAIT_FILE="$PROJECT_DIR/scripts/shell/run_calibrate/wait_to_calib.yaml"
+WAIT_FILE="$PROJECT_DIR/config/wait_to_calib.yaml"
 
 # ===== 循环处理待标定 rosbag，直到 yaml 中没有数据 =====
 while true; do
