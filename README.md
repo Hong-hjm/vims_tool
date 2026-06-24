@@ -48,11 +48,8 @@ vims_tool/
 │       │   └── get_rosbag.sh         # 获取标定 rosbag 列表
 │       ├── remove/
 │       │   └── rm_data.sh            # 删除 RDK 上的数据
-│       ├── zip/
-│       │   └── zip.sh                # 压缩目录脚本
-│       └── evo/
-│           ├── set_evo_Agg.sh        # 关闭 evo 可视化（后端设为 Agg）
-│           └── set_evo_TkAgg.sh      # 开启 evo 可视化（后端设为 TkAgg）
+│       └── zip/
+│           └── zip.sh                # 压缩目录脚本
 └── utils/
     ├── file_utils.py                 # 文件操作工具
     ├── log_utils.py                  # 日志捕获与输出重定向
@@ -226,7 +223,6 @@ processor.calculate_stats()                 # 计算统计量
 
 `evo_traj.py` 提供 VIO 轨迹的批量可视化功能：
 
-- 自动关闭 evo 的 GUI 显示（后端设为 Agg），适合无图形界面的环境
 - 批量处理多个 `vio_results` 目录下的 TUM 格式轨迹文件
 - 为每个 rosbag 生成轨迹截图
 - 提取轨迹终点坐标并保存到 TXT 文件

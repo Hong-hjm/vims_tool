@@ -40,9 +40,6 @@ try:
     evo_config = _config.get("evo")
     # 压缩
     zip_sh = calib_tool / "scripts" / "shell" / "zip" / "zip.sh"
-    # evo设置
-    set_evo_Agg_sh = calib_tool / "scripts" / "shell" / "evo" / "set_evo_Agg.sh"
-    set_evo_TkAgg_sh = calib_tool / "scripts" / "shell" / "evo" / "set_evo_TkAgg.sh"
     
 except:
     raise RuntimeError(f"Failed to load paths from {config_path}")
